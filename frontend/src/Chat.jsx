@@ -87,6 +87,7 @@ const Chat = () => {
                   {new Date(msg.timestamp).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: true
                   })}
                 </span>
               </div>
