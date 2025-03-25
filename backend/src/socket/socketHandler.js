@@ -9,10 +9,12 @@ module.exports = function (io) {
 
     socket.on("sendMessage", ({ roomId, message, sender }) => {
       if (!roomId || !message || !sender) return;
+      const timestamp = new Date().toISOString();
 
       socket.to(roomId).emit("receiveMessage", {
         message,
         sender,
+        timestamp,
         notification: `New message from ${sender}`,
       });
     });

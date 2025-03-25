@@ -13,7 +13,7 @@ const Chat = () => {
   useEffect(() => {
     socket.on("receiveMessage", (data) => {
       setNotificationMessage(data.notification);
-      setMessages((prev) => [...prev, { ...data, isOwn: false }]);
+      setMessages((prev) => [...prev, data]);
     });
 
     return () => {
@@ -36,11 +36,16 @@ const Chat = () => {
       roomId,
       message: inputMessage,
       sender: username,
+      timestamp: new Date().toISOString(),
     });
 
     setMessages((prev) => [
       ...prev,
-      { message: inputMessage, sender: username },
+      {
+        message: inputMessage,
+        sender: username,
+        timestamp: new Date().toISOString(),
+      },
     ]);
     setInputMessage("");
   };
@@ -76,11 +81,18 @@ const Chat = () => {
           <div className="mt-4 p-2 text-sm font-medium min-h-[200px] overflow-auto text-neutral-500 border-t border-neutral-300">
             {messages.map((msg, idx) => (
               <div key={idx} className="py-1">
-                <span className="text-neutral-800">{msg.sender}:</span>{" "}
+                <span className="text-neutral-700">{msg.sender}:</span>{" "}
                 {msg.message}
+                <span className="ml-2 text-[10px] text-gray-500 ">
+                  {new Date(msg.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </div>
             ))}
           </div>
+
           <div className="mt-auto flex pt-1">
             <input
               type="text"
@@ -90,7 +102,8 @@ const Chat = () => {
             />
             <button
               onClick={handleSendMessage}
-              className="ml-2 px-4 py-2 rounded-md bg-neutral-800 text-white text-xs cursor-pointer"
+              disabled={inputMessage.trim().length === 0}
+              className="ml-2 px-4 py-2 rounded-md disabled:bg-neutral-600 disabled:pointer-events-none bg-neutral-800 text-white text-xs cursor-pointer"
             >
               Send
             </button>
